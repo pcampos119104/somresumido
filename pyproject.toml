@@ -1,0 +1,55 @@
+[tool.poetry]
+name = "somresumido"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.13"
+django = "^5.1.6"
+django-environ = "^0.12.0"
+django-allauth = "^65.4.1"
+django-htmx = "^1.22.0"
+django-extensions = "^3.2.3"
+django-browser-reload = "^1.18.0"
+psycopg = {extras = ["binary"], version = "^3.2.4"}
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+pytest-django = "^4.10.0"
+ruff = "^0.9.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+# Configurations for pystest
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "somresumido.settings"
+
+# -- find the tests:
+python_files = ["test_*.py", "*_test.py", "testing/python/*.py"]
+
+# Configuration for Ruff
+[tool.ruff]
+# 80 it's the default but nowadays the common sense it's 120.
+line-length = 120
+# Show an enumeration of all fixed lint violations
+show-fixes = true
+
+[tool.ruff.lint]
+# https://docs.astral.sh/ruff/linter/#rule-selection
+# which linter to run
+select = [
+    # isort
+    "I",
+    # pycodestyle
+    "E",
+]
+
+[tool.ruff.format]
+# https://docs.astral.sh/ruff/settings/#format_quote-style
+# A lot discussion on the internet about it, I use single quotes.
+quote-style = "single"

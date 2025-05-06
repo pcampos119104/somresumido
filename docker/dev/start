@@ -1,0 +1,18 @@
+#!/bin/bash
+set -o errexit
+set -o pipefail
+set -o nounset
+
+# Apply migrations if has new one.
+echo "Running migrations..."
+python manage.py migrate
+
+# -i the input.css for some tailwind directives or pure css,
+# it will be added to the -o output.css in the
+# tailwind processing, --watch=always is the hot reload.
+echo "Starting tailwindcss watcher"
+exec npx @tailwindcss/cli -i ./somresumido/static/css/input.css -o ./somresumido/static/css/output.css --watch=always &
+
+echo "Starting runserver"
+exec python manage.py runserver 0.0.0.0:8000
+

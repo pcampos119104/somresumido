@@ -1,0 +1,25 @@
+{% extends 'base/_base.html' %}
+{% block content %}
+    <h1>Simple AlpineJS counter</h1>
+
+    <div x-data="{ count: 0 }"
+    >
+        <button x-on:click="count++">
+            Increment
+        </button>
+        <span x-text="count"></span>
+    </div>
+    <hr>
+    <h1>Simple HTMX</h1>
+    <div>
+        <button
+                hx-get="{% url 'base:htmx' %}"
+                hx-trigger="click"
+                hx-target="#click-test"
+                hx-swap="outerHTML"
+        >
+            Click Me!
+        </button>
+        <span id="click-test"></span>
+    </div>
+{% endblock content %}

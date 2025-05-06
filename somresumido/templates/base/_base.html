@@ -1,0 +1,32 @@
+{% load static %}
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <link
+            href="{% static 'css/pico.sand.min.css' %}"
+            rel="stylesheet">
+    <script
+            src="{% static 'js/alpine.min.js' %}"
+            defer></script>
+    <script
+            src="{% static 'js/htmx.min.js' %}"
+            defer></script>
+    <title>Title</title>
+</head>
+<body
+        class="container"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<!-- Header -->
+{% include 'base/_header.html' %}
+
+<main>
+    {% block content %}
+    {% endblock content %}
+
+</main>
+</body>
+</html>

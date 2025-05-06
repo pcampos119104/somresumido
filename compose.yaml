@@ -1,0 +1,43 @@
+services:
+# The service to be created on docker
+  web:
+    # how to build the image for this service
+    build:
+      # Where is the directory to work on...
+      context: .
+      # ... with what Dockerfile instructions
+      dockerfile: ./docker/dev/Dockerfile
+    image: somresumido_local
+    container_name: somresumido_local
+    # Make the code accessible for the container.
+    volumes:
+      - .:/app:z
+    # your .env based on .env.template
+    env_file:
+      - .env
+    # Open the port in localhost:8000 and 2718 for external access
+    ports:
+      - "8000:8000"
+    # Only start this image after postgres
+    depends_on:
+      - postgres
+    # The bash file to execute, the one created above and added to Dockerfile
+    command: /start
+
+  postgres:
+    # The postgres image from docker hub
+    image: postgres:16.2
+    container_name: somresumido_postgres
+    # The volume that will be used by this image
+    volumes:
+      - somresumido_postgres_data:/var/lib/postgresql/data
+    # Open the port in localhost:5432 for external access
+    ports:
+      - "5432:5432"
+    # db NAME, USER and HOST are by default 'postgres', just configure the password here
+    environment:
+      POSTGRES_PASSWORD: postgres
+
+volumes:
+    # Volume used by the postgres container
+    somresumido_postgres_data: { }

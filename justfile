@@ -15,7 +15,7 @@ shell:
   docker compose run --rm web sh
 
 # Run manage.py inside the container
-mng command:
+mng +command:
   docker compose run --rm web python manage.py {{command}}
 
 # Run the tests

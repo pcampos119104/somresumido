@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'django_htmx',
     'somresumido.base',
+    'somresumido.audio',
 ]
 
 MIDDLEWARE = [

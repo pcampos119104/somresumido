@@ -4,5 +4,5 @@ from somresumido.audio.views import Create
 
 app_name = 'audio'
 urlpatterns = [
-    path('', Create.as_view(), name='create'),
+    path('create/', Create.as_view(), name='create'),
 ]

@@ -7,7 +7,7 @@
             content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <link
-            href="{% static 'css/pico.sand.min.css' %}"
+            href="{% static 'css/pico.pumpkin.min.css' %}"
             rel="stylesheet">
     <script
             src="{% static 'js/alpine.min.js' %}"
@@ -17,6 +17,16 @@
             defer></script>
     <title>Title</title>
 </head>
+<style>
+    :root {
+        --pico-border-radius: 2rem;
+        --pico-form-element-spacing-vertical: 1rem;
+        --pico-form-element-spacing-horizontal: 1.25rem;
+    }
+      button {
+    --pico-font-weight: 700;
+  }
+</style>
 <body
         class="container"
         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>

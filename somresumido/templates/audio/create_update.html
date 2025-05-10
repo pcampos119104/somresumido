@@ -1,5 +1,15 @@
 {% extends base_template %}
 {% load static %}
 {% block content %}
-    <h1>teste</h1>
+    <section id="section" class="bg-white dark:bg-gray-900">
+        <h1>Faca o upload do audio</h1>
+        <form
+                hx-post="{% url 'audio:create' %}"
+                hx-swap="outerHTML"
+                hx-target="#section">
+            {{ audio_form.as_p }}
+            <button type="submit">Enviar</button>
+
+        </form>
+    </section>
 {% endblock content %}

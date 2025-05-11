@@ -1,0 +1,27 @@
+{% extends base_template %}
+{% load static %}
+{% block content %}
+    <section id="section">
+        <h2>Listagem dos audios</h2>
+        <div class="overflow-auto">
+            <table data-theme="dark" class="striped">
+                <thead>
+                <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">Nome do arquivo</th>
+                    <th scope="col">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for audio in page_obj %}
+                <tr>
+                    <th scope="row">{{ audio.pk }}</th>
+                    <td>{{ audio.original_file }}</td>
+                    <td>{{ audio.get_status_display }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock content %}

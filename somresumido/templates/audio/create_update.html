@@ -6,6 +6,7 @@
         <form
                 hx-post="{% url 'audio:create' %}"
                 hx-swap="outerHTML"
+                hx-encoding="multipart/form-data"
                 hx-target="#section">
             {{ audio_form.as_p }}
             <button type="submit">Enviar</button>

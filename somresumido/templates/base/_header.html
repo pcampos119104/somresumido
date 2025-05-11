@@ -1,11 +1,11 @@
 <header>
     <nav>
         <ul>
-            <li><strong><a href="/" rel="home">Somresumido</a></strong></li>
+            <li><strong><a href="{% url 'base:home'  %}" rel="home">Somresumido</a></strong></li>
         </ul>
         <ul>
-            <li><a href="">Biblioteca</a></li>
-            <li><a href="">Adicionar</a></li>
+            <li><a href="{% url 'audio:listing'  %}">Biblioteca</a></li>
+            <li><a href="{% url 'audio:create'  %}">Adicionar</a></li>
             <li><button class="secondary">Login</button></li>
         </ul>
     </nav>

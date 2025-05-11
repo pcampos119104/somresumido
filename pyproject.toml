@@ -17,6 +17,8 @@ django-browser-reload = "^1.18.0"
 psycopg = {extras = ["binary"], version = "^3.2.4"}
 whitenoise = "^6.9.0"
 gunicorn = "^23.0.0"
+django-storages = "^1.14.6"
+boto3 = "^1.38.13"
 
 
 [tool.poetry.group.dev.dependencies]

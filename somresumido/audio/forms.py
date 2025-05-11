@@ -6,5 +6,5 @@ from somresumido.audio.models import Audio
 class AudioForm(forms.ModelForm):
     class Meta:
         model = Audio
-        fields = ['original_file']
+        fields = ('original_file',)
 

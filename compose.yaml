@@ -37,7 +37,19 @@ services:
     # db NAME, USER and HOST are by default 'postgres', just configure the password here
     environment:
       POSTGRES_PASSWORD: postgres
-
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: "minioadmin"
+      MINIO_ROOT_PASSWORD: "minioadmin"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
 volumes:
     # Volume used by the postgres container
     somresumido_postgres_data: { }
+  # Volume used by the minio container
+    minio_data:

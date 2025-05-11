@@ -1,5 +1,5 @@
 services:
-# The service to be created on docker
+  # The service to be created on docker
   web:
     # how to build the image for this service
     build:
@@ -48,8 +48,21 @@ services:
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+    volumes:
+      - n8n_data:/home/node/.n8n
 volumes:
-    # Volume used by the postgres container
-    somresumido_postgres_data: { }
+  # Volume used by the postgres container
+  somresumido_postgres_data: { }
   # Volume used by the minio container
-    minio_data:
+  minio_data:
+  # Volume used by the minio container
+  n8n_data:

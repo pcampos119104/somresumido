@@ -6,6 +6,9 @@ from django.views import View
 
 from somresumido.audio.forms import AudioForm
 from somresumido.audio.models import Audio
+from django.http import HttpResponse
+import boto3
+from django.conf import settings
 
 
 # @login_required
@@ -49,9 +52,34 @@ class Create(View):
             }
             return render(request, self.template, context=context, status=400)
 
-
         # form.instance.owner = request.user
         form.instance.owner = get_user_model().objects.first()
         form.save()
         # messages.success(request, 'Ingrediente criado.')
         return HttpResponse('<span>Enviado</span>', status=201)
+
+
+def update_processed_audio(request):
+    if not request.method == 'POST':
+        return HttpResponse(status=400)
+
+    audio_id = request.POST.get('audio_id')
+    processed_path = request.POST.get('processed_path')
+    try:
+        audio = Audio.objects.get(id=audio_id)
+        # Verificar se o arquivo existe no MinIO
+        s3_client = boto3.client(
+            's3',
+            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+        )
+        s3_client.head_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=processed_path)
+        audio.processed_file = processed_path
+        audio.status = 'PROCESSING'
+        audio.save()
+        return HttpResponse('Áudio processado atualizado!')
+    except s3_client.exceptions.ClientError:
+        return HttpResponse('Arquivo não encontrado no MinIO', status=400)
+    except Exception as e:
+        return HttpResponse(f'Erro: {str(e)}', status=500)

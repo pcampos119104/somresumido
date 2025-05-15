@@ -164,6 +164,13 @@ AWS_QUERYSTRING_AUTH = True  # Gera URLs assinadas para acesso privado
 AWS_S3_SIGNATURE_VERSION = 's3v4'  # Necessário para compatibilidade com MinIO
 DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
 
+# Celery
+CELERY_BROKER_URL = env('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

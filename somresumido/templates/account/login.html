@@ -1,0 +1,24 @@
+{% extends 'base/_base.html' %}
+{% block content %}
+    <section>
+
+        <!-- form -->
+        <form
+                class="space-y-4 md:space-y-6"
+                method="post"
+                action="{% url 'account_login' %}">
+            {% csrf_token %}
+            {{ form.non_field_errors | safe }}
+            {{ form.login.label }}
+            {{ form.login }}
+            {{ form.password.label }}
+            {{ form.password }}
+
+            <!-- botao de submissao -->
+            <button
+                    type="submit">
+                <span class="w-full">Entrar</span>
+            </button>
+        </form>
+    </section>
+{% endblock content %}

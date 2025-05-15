@@ -7,8 +7,8 @@ services:
       context: .
       # ... with what Dockerfile instructions
       dockerfile: ./docker/dev/Dockerfile
-    image: somresumido_local
-    container_name: somresumido_local
+    image: somresumido_web
+    container_name: somresumido_web
     # Make the code accessible for the container.
     volumes:
       - .:/app:z
@@ -21,8 +21,16 @@ services:
     # Only start this image after postgres
     depends_on:
       - postgres
+      - minio
+      - redis
     # The bash file to execute, the one created above and added to Dockerfile
     command: /start
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    container_name: somresumido_redis
 
   postgres:
     # The postgres image from docker hub
@@ -37,31 +45,62 @@ services:
     # db NAME, USER and HOST are by default 'postgres', just configure the password here
     environment:
       POSTGRES_PASSWORD: postgres
+
   minio:
     image: minio/minio
     ports:
       - "9000:9000"
       - "9001:9001"
+    container_name: somresumido_minio
     environment:
       MINIO_ROOT_USER: "minioadmin"
       MINIO_ROOT_PASSWORD: "minioadmin"
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
+
   n8n:
     image: docker.n8n.io/n8nio/n8n
     restart: always
     ports:
       - "5678:5678"
+    container_name: somresumido_n8n
     environment:
       - N8N_HOST=localhost
       - N8N_PORT=5678
       - N8N_PROTOCOL=http
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_ENDPOINT=http://minio:9000
     volumes:
       - n8n_data:/home/node/.n8n
+
+  celery:
+    build:
+      # Where is the directory to work on...
+      context: .
+      # ... with what Dockerfile instructions
+      dockerfile: ./docker/dev/Dockerfile
+    image: somresumido_celery
+    container_name: somresumido_celery
+    env_file:
+      - .env
+    environment:
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin123
+      - MINIO_ENDPOINT=http://minio:9000
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - web
+    command: celery -A somresumido worker --loglevel=info
+
 volumes:
   # Volume used by the postgres container
-  somresumido_postgres_data: { }
+  somresumido_postgres_data:
   # Volume used by the minio container
   minio_data:
   # Volume used by the minio container

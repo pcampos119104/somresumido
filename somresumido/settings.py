@@ -158,8 +158,11 @@ AWS_ACCESS_KEY_ID = env('MINIO_ACCESS_KEY')
 AWS_SECRET_ACCESS_KEY = env('MINIO_SECRET_KEY')
 AWS_STORAGE_BUCKET_NAME = env('MINIO_BUCKET_NAME')
 AWS_S3_ENDPOINT_URL = env('MINIO_ENDPOINT')  # Ajuste para http://minio:9000 no Dokploy
+AWS_REGION_NAME = env('MINIO_REGION_NAME')
+AWS_S3_FORCE_PATH_STYLE = True
 AWS_S3_FILE_OVERWRITE = False  # Evita sobrescrever arquivos
 AWS_DEFAULT_ACL = None  # Arquivos privados
+AWS_S3_USE_SSL = False
 AWS_QUERYSTRING_AUTH = True  # Gera URLs assinadas para acesso privado
 AWS_S3_SIGNATURE_VERSION = 's3v4'  # Necessário para compatibilidade com MinIO
 DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
@@ -171,6 +174,21 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
+CELERY_TASK_QUEUES = {
+    'celery': {
+        'exchange': 'celery',
+        'binding_key': 'celery',
+    },
+    'redis_queue': {
+        'exchange': 'redis_queue',
+        'binding_key': 'redis_queue',
+    },
+}
+CELERY_TASK_ROUTES = {
+    'audio.tasks.process_redis_messages': {'queue': 'redis_queue'},
+    'audio.tasks.process_audio_task': {'queue': 'celery'},
+}
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

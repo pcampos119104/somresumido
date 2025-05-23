@@ -6,5 +6,5 @@ app_name = 'audio'
 urlpatterns = [
     path('create/', Create.as_view(), name='create'),
     path('', listing, name='listing'),
-    path('webhook/update-processed-audio', update_processed_audio, name='update_processed_audio'),
+    path('webhook/update-processed', update_processed_audio, name='update_processed'),
 ]

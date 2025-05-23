@@ -56,7 +56,8 @@ class Create(LoginRequiredMixin, View):
             return render(request, self.template, context=context, status=400)
 
         form.instance.owner = request.user
-        form.save()
+        audio = form.save()
+        process_audio_task.delay_on_commit(audio.id)
         # messages.success(request, 'Ingrediente criado.')
         return HttpResponse('<span>Enviado</span>', status=201)
 
@@ -80,7 +81,6 @@ def update_processed_audio(request):
         audio.processed_file = processed_path
         audio.status = 'PROCESSING'
         audio.save()
-        process_audio_task.delay_on_commit(audio.id)
         return HttpResponse('Áudio processado atualizado!')
     except s3_client.exceptions.ClientError:
         return HttpResponse('Arquivo não encontrado no MinIO', status=400)

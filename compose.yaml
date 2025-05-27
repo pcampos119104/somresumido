@@ -96,7 +96,7 @@ services:
     depends_on:
       - redis
       - web
-    command: celery -A somresumido worker --loglevel=debug -Q celery,redis_queue
+    command: celery -A somresumido worker --loglevel=debug -Q celery,redis_queue --concurrency=4
 
 volumes:
   # Volume used by the postgres container

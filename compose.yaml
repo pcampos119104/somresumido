@@ -27,14 +27,14 @@ services:
     command: /start
 
   rabbitmq:
-      image: rabbitmq:3-management
-      container_name: sr_rabbitmq
-      hostname: rabbitmq
-      environment:
-        - RABBITMQ_DEFAULT_USER=guest
-        - RABBITMQ_DEFAULT_PASS=guest
-      volumes:
-        - sr_rabbitmq_data:/var/lib/rabbitmq
+    image: rabbitmq:3-management
+    container_name: sr_rabbitmq
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - sr_rabbitmq_data:/var/lib/rabbitmq
 
   postgres:
     # The postgres image from docker hub
@@ -94,7 +94,8 @@ services:
     depends_on:
       - rabbitmq
       - web
-    command: celery -A somresumido worker --loglevel=info -Q celery,redis_queue --concurrency=4
+    command: celery -A somresumido worker --loglevel=info -Q celery,rabbitmq_queue --concurrency=4
+
   flower:
     image: mher/flower
     container_name: sr_flower
@@ -102,6 +103,22 @@ services:
       - "5555:5555"
     env_file:
       - .env
+
+  rabbitmq_consumer:
+    build:
+      context: .
+      dockerfile: ./docker/dev/Dockerfile
+    image: sr_rabbitmq_consumer
+    container_name: sr_rabbitmq_consumer
+    env_file:
+      - .env
+    volumes:
+      - .:/app:z
+    depends_on:
+      - rabbitmq
+      - web
+    command: python -m somresumido.rabbitmq_consumer
+
 volumes:
   # Volume used by the postgres container
   sr_postgres_data:

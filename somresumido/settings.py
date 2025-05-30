@@ -179,13 +179,8 @@ CELERY_TASK_QUEUES = {
         'exchange': 'celery',
         'binding_key': 'celery',
     },
-    'redis_queue': {
-        'exchange': 'redis_queue',
-        'binding_key': 'redis_queue',
-    },
 }
 CELERY_TASK_ROUTES = {
-    'audio.tasks.process_redis_messages': {'queue': 'redis_queue'},
     'audio.tasks.process_audio_task': {'queue': 'celery'},
 }
 

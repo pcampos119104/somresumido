@@ -22,15 +22,19 @@ services:
     depends_on:
       - postgres
       - minio
-      - redis
+      - rabbitmq
     # The bash file to execute, the one created above and added to Dockerfile
     command: /start
 
-  redis:
-    image: redis:latest
-    ports:
-      - "6379:6379"
-    container_name: sr_redis
+  rabbitmq:
+      image: rabbitmq:3-management
+      container_name: sr_rabbitmq
+      hostname: rabbitmq
+      environment:
+        - RABBITMQ_DEFAULT_USER=guest
+        - RABBITMQ_DEFAULT_PASS=guest
+      volumes:
+        - sr_rabbitmq_data:/var/lib/rabbitmq
 
   postgres:
     # The postgres image from docker hub
@@ -85,19 +89,19 @@ services:
     container_name: sr_celery
     env_file:
       - .env
-    environment:
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin
-      - MINIO_ENDPOINT=http://minio:9000
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     volumes:
       - .:/app:z
     depends_on:
-      - redis
+      - rabbitmq
       - web
-    command: celery -A somresumido worker --loglevel=debug -Q celery,redis_queue --concurrency=4
-
+    command: celery -A somresumido worker --loglevel=info -Q celery,redis_queue --concurrency=4
+  flower:
+    image: mher/flower
+    container_name: sr_flower
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env
 volumes:
   # Volume used by the postgres container
   sr_postgres_data:
@@ -105,3 +109,4 @@ volumes:
   sr_minio_data:
   # Volume used by the minio container
   sr_n8n_data:
+  sr_rabbitmq_data:

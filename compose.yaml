@@ -24,7 +24,7 @@ services:
       - minio
       - rabbitmq
     # The bash file to execute, the one created above and added to Dockerfile
-    command: /start
+    command: /start.xsh
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -89,12 +89,14 @@ services:
     container_name: sr_celery
     env_file:
       - .env
+    environment:
+      - SERVICE_TYPE=celery
     volumes:
       - .:/app:z
     depends_on:
       - rabbitmq
       - web
-    command: celery -A somresumido worker --loglevel=info -Q celery,rabbitmq_queue --concurrency=4
+    command: /start.xsh
 
   flower:
     image: mher/flower
@@ -112,12 +114,14 @@ services:
     container_name: sr_rabbitmq_consumer
     env_file:
       - .env
+    environment:
+      - SERVICE_TYPE=rabbitmq_consumer
     volumes:
       - .:/app:z
     depends_on:
       - rabbitmq
       - web
-    command: python -m somresumido.rabbitmq_consumer
+    command: /start.xsh
 
 volumes:
   # Volume used by the postgres container

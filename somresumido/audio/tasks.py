@@ -3,11 +3,8 @@ from botocore.exceptions import ClientError
 
 from somresumido.audio.models import Audio
 from celery import shared_task
-from celery.signals import celeryd_after_setup
-import redis
 import pika
 import json
-from django.conf import settings
 
 
 @shared_task(bind=True, max_retries=5)

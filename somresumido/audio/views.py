@@ -1,3 +1,5 @@
+import boto3
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,9 +10,7 @@ from django.views import View
 
 from somresumido.audio.forms import AudioForm
 from somresumido.audio.models import Audio
-from django.http import HttpResponse
-import boto3
-from django.conf import settings
+
 from .tasks import process_audio_task
 
 

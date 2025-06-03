@@ -1,10 +1,11 @@
 # audio/rabbitmq_consumer.py
-import pika
 import json
-import django
+import logging
 import os
 import time
-import logging
+
+import django
+import pika
 from botocore.exceptions import ClientError
 
 # Configurar logging
@@ -20,6 +21,7 @@ except Exception as e:
     raise
 
 from django.conf import settings
+
 from somresumido.audio.models import Audio
 
 
@@ -51,8 +53,6 @@ def wait_for_rabbitmq():
 
 def consume_rabbitmq():
     logger.info("Iniciando consumidor RabbitMQ: fila audio_processed")
-    logger.info(
-        f"Configurações do storage: AWS_ACCESS_KEY_ID={settings.AWS_ACCESS_KEY_ID}, AWS_S3_ENDPOINT_URL={settings.AWS_S3_ENDPOINT_URL}")
 
     # Aguardar RabbitMQ
     wait_for_rabbitmq()

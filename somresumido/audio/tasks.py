@@ -1,10 +1,11 @@
+import json
+
+import pika
 import requests
 from botocore.exceptions import ClientError
+from celery import shared_task
 
 from somresumido.audio.models import Audio
-from celery import shared_task
-import pika
-import json
 
 
 @shared_task(bind=True, max_retries=5)

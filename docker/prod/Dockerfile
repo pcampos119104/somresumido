@@ -27,11 +27,11 @@ RUN poetry config virtualenvs.create false
 RUN poetry install
 
 # Copy start bash script with the instruction on how to start Django.
-COPY ./docker/prod/start.sh /start.sh
-RUN sed -i 's/\r$//g' /start.sh
-RUN chmod +x /start.sh
+COPY ./docker/prod/start.xsh /start.xsh
+RUN sed -i 's/\r$//g' /start.xsh
+RUN chmod +x /start.xsh
 
 # Copy all project to the image.
 COPY . /app
 
-ENTRYPOINT ["/start.sh"]
+ENTRYPOINT ["/start.xsh"]

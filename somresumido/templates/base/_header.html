@@ -1,12 +1,23 @@
 <header>
     <nav>
         <ul>
-            <li><strong><a href="/" rel="home">Somresumido</a></strong></li>
+            <li><strong><a href="{% url 'base:home' %}" rel="home">Somresumido</a></strong></li>
         </ul>
         <ul>
-            <li><a href="">Biblioteca</a></li>
-            <li><a href="">Adicionar</a></li>
-            <li><button class="secondary">Login</button></li>
+            <li><a href="{% url 'audio:listing' %}">Biblioteca</a></li>
+            <li><a href="{% url 'audio:create' %}">Adicionar</a></li>
+            {% if user.is_authenticated %}
+                <!-- todo melhorar o logout -->
+                <li>
+                    <a class="secondary" href="{% url 'account_logout' %}">
+                        {{ user.username | title }}
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <button class="secondary" onclick="location.href='{% url 'account_login' %}'">Login</button>
+                </li>
+            {% endif %}
         </ul>
     </nav>
 </header>

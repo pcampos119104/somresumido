@@ -36,12 +36,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
     'django_extensions',
     'django_browser_reload',
     'allauth',
     'allauth.account',
     'django_htmx',
     'somresumido.base',
+    'somresumido.audio',
 ]
 
 MIDDLEWARE = [
@@ -142,9 +144,44 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'somresumido/static']
 
 STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+        },
+    },
     'staticfiles': {
         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
     },
+}
+# Configuração do MinIO (S3-compatible)
+AWS_ACCESS_KEY_ID = env('MINIO_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = env('MINIO_SECRET_KEY')
+AWS_STORAGE_BUCKET_NAME = env('MINIO_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = env('MINIO_ENDPOINT')  # Ajuste para http://minio:9000 no Dokploy
+AWS_REGION_NAME = env('MINIO_REGION_NAME')
+AWS_S3_FORCE_PATH_STYLE = True
+AWS_S3_FILE_OVERWRITE = False  # Evita sobrescrever arquivos
+AWS_DEFAULT_ACL = None  # Arquivos privados
+AWS_S3_USE_SSL = False
+AWS_QUERYSTRING_AUTH = True  # Gera URLs assinadas para acesso privado
+AWS_S3_SIGNATURE_VERSION = 's3v4'  # Necessário para compatibilidade com MinIO
+DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
+
+# Celery
+CELERY_BROKER_URL = env('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+CELERY_TASK_QUEUES = {
+    'celery': {
+        'exchange': 'celery',
+        'binding_key': 'celery',
+    },
+}
+CELERY_TASK_ROUTES = {
+    'audio.tasks.process_audio_task': {'queue': 'celery'},
 }
 
 # Default primary key field type

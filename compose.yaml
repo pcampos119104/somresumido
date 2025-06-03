@@ -1,5 +1,5 @@
 services:
-# The service to be created on docker
+  # The service to be created on docker
   web:
     # how to build the image for this service
     build:
@@ -7,8 +7,8 @@ services:
       context: .
       # ... with what Dockerfile instructions
       dockerfile: ./docker/dev/Dockerfile
-    image: somresumido_local
-    container_name: somresumido_local
+    image: sr_web
+    container_name: sr_web
     # Make the code accessible for the container.
     volumes:
       - .:/app:z
@@ -21,16 +21,28 @@ services:
     # Only start this image after postgres
     depends_on:
       - postgres
+      - minio
+      - rabbitmq
     # The bash file to execute, the one created above and added to Dockerfile
-    command: /start
+    command: /start.xsh
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: sr_rabbitmq
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - sr_rabbitmq_data:/var/lib/rabbitmq
 
   postgres:
     # The postgres image from docker hub
     image: postgres:16.2
-    container_name: somresumido_postgres
+    container_name: sr_postgres
     # The volume that will be used by this image
     volumes:
-      - somresumido_postgres_data:/var/lib/postgresql/data
+      - sr_postgres_data:/var/lib/postgresql/data
     # Open the port in localhost:5432 for external access
     ports:
       - "5432:5432"
@@ -38,6 +50,84 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
 
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    container_name: sr_minio
+    environment:
+      MINIO_ROOT_USER: "minioadmin"
+      MINIO_ROOT_PASSWORD: "minioadmin"
+    volumes:
+      - sr_minio_data:/data
+    command: server /data --console-address ":9001"
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    container_name: sr_n8n
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_ENDPOINT=http://minio:9000
+    volumes:
+      - sr_n8n_data:/home/node/.n8n
+
+  celery:
+    build:
+      # Where is the directory to work on...
+      context: .
+      # ... with what Dockerfile instructions
+      dockerfile: ./docker/dev/Dockerfile
+    image: sr_celery
+    container_name: sr_celery
+    env_file:
+      - .env
+    environment:
+      - SERVICE_TYPE=celery
+    volumes:
+      - .:/app:z
+    depends_on:
+      - rabbitmq
+      - web
+    command: /start.xsh
+
+  flower:
+    image: mher/flower
+    container_name: sr_flower
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env
+
+  rabbitmq_consumer:
+    build:
+      context: .
+      dockerfile: ./docker/dev/Dockerfile
+    image: sr_rabbitmq_consumer
+    container_name: sr_rabbitmq_consumer
+    env_file:
+      - .env
+    environment:
+      - SERVICE_TYPE=rabbitmq_consumer
+    volumes:
+      - .:/app:z
+    depends_on:
+      - rabbitmq
+      - web
+    command: /start.xsh
+
 volumes:
-    # Volume used by the postgres container
-    somresumido_postgres_data: { }
+  # Volume used by the postgres container
+  sr_postgres_data:
+  # Volume used by the minio container
+  sr_minio_data:
+  # Volume used by the minio container
+  sr_n8n_data:
+  sr_rabbitmq_data:

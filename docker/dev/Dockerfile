@@ -15,6 +15,9 @@ ENV PYTHONUNBUFFERED 1
 RUN apk update
 # install bash on image, could be the ash but the bash is more agnostic
 RUN apk add --no-cache bash
+RUN apk add --no-cache curl
+RUN apk add --no-cache postgresql-client
+RUN pip3 install 'xonsh[full]'
 
 # Copy our poetry artifacts to the building image
 COPY poetry.lock pyproject.toml /app
@@ -26,9 +29,9 @@ RUN poetry config virtualenvs.create false
 RUN poetry install --with dev
 
 # Copy start bash script with the instruction on how to start Django.
-COPY ./docker/dev/start /start
-RUN sed -i 's/\r$//g' /start
-RUN chmod +x /start
+COPY ./docker/dev/start.xsh /start.xsh
+RUN sed -i 's/\r$//g' /start.xsh
+RUN chmod +x /start.xsh
 
 # Copy all project to the image.
 COPY . /app

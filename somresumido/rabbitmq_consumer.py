@@ -21,6 +21,7 @@ except Exception as e:
     raise
 
 from somresumido.audio.models import Audio  # noqa: E402
+
 rabbitmq_user = os.environ.get('RABBITMQ_USER', 'guest')
 rabbitmq_password = os.environ.get('RABBITMQ_PASSWORD', 'guest')
 rabbitmq_host = os.environ.get('RABBITMQ_HOST', 'rabbitmq')

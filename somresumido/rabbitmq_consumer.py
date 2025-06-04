@@ -21,6 +21,10 @@ except Exception as e:
     raise
 
 from somresumido.audio.models import Audio  # noqa: E402
+rabbitmq_user = os.environ.get('RABBITMQ_USER', 'guest')
+rabbitmq_password = os.environ.get('RABBITMQ_PASSWORD', 'guest')
+rabbitmq_host = os.environ.get('RABBITMQ_HOST', 'rabbitmq')
+rabbitmq_port = os.environ.get('RABBITMQ_PORT', '5672')
 
 
 def wait_for_rabbitmq():
@@ -31,9 +35,9 @@ def wait_for_rabbitmq():
         try:
             connection = pika.BlockingConnection(
                 pika.ConnectionParameters(
-                    host='rabbitmq',
-                    port=5672,
-                    credentials=pika.PlainCredentials('guest', 'guest'),
+                    host=rabbitmq_host,
+                    port=rabbitmq_port,
+                    credentials=pika.PlainCredentials(rabbitmq_user, rabbitmq_password),
                     heartbeat=600,
                     blocked_connection_timeout=300,
                 )
@@ -59,9 +63,9 @@ def consume_rabbitmq():
         try:
             connection = pika.BlockingConnection(
                 pika.ConnectionParameters(
-                    host='rabbitmq',
-                    port=5672,
-                    credentials=pika.PlainCredentials('guest', 'guest'),
+                    host=rabbitmq_host,
+                    port=rabbitmq_port,
+                    credentials=pika.PlainCredentials(rabbitmq_user, rabbitmq_password),
                     heartbeat=600,
                     blocked_connection_timeout=300,
                 )

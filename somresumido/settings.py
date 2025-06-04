@@ -144,10 +144,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'somresumido/static']
 
 STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.s3.S3Storage",
-        "OPTIONS": {
-        },
+    'default': {
+        'BACKEND': 'storages.backends.s3.S3Storage',
+        'OPTIONS': {},
     },
     'staticfiles': {
         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
@@ -157,15 +156,15 @@ STORAGES = {
 AWS_ACCESS_KEY_ID = env('MINIO_ACCESS_KEY')
 AWS_SECRET_ACCESS_KEY = env('MINIO_SECRET_KEY')
 AWS_STORAGE_BUCKET_NAME = env('MINIO_BUCKET_NAME')
-AWS_S3_ENDPOINT_URL = env('MINIO_ENDPOINT')  # Ajuste para http://minio:9000 no Dokploy
+AWS_S3_ENDPOINT_URL = env('MINIO_ENDPOINT')
 AWS_REGION_NAME = env('MINIO_REGION_NAME')
 AWS_S3_FORCE_PATH_STYLE = True
 AWS_S3_FILE_OVERWRITE = False  # Evita sobrescrever arquivos
 AWS_DEFAULT_ACL = None  # Arquivos privados
-AWS_S3_USE_SSL = False
+AWS_S3_USE_SSL = env('MINIO_USE_SSL')
 AWS_QUERYSTRING_AUTH = True  # Gera URLs assinadas para acesso privado
 AWS_S3_SIGNATURE_VERSION = 's3v4'  # Necessário para compatibilidade com MinIO
-DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
+DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
 
 # Celery
 CELERY_BROKER_URL = env('CELERY_BROKER_URL')

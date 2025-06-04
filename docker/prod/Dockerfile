@@ -15,7 +15,8 @@ ENV PYTHONUNBUFFERED 1
 RUN apk update
 # install bash on image, could be the ash but the bash is more agnostic
 RUN apk add --no-cache bash
-RUN apk add --no-cache gcc python3-dev musl-dev linux-headers
+RUN apk add --no-cache gcc python3-dev musl-dev linux-headers curl postgresql-client
+RUN pip3 install 'xonsh[full]'
 
 # Copy our poetry artifacts to the building image
 COPY poetry.lock pyproject.toml /app

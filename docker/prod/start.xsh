@@ -11,48 +11,8 @@ from pathlib import Path
 $RAISE_SUBPROC_ERROR = True
 $XONSH_TRACEBACK_LOGFILE = '/tmp/xonsh_traceback.log'
 
-# Função para aguardar um serviço
-def wait_for_service(service_name: str, check_cmd: list, timeout: int = 30, interval: int = 5) -> bool:
-    """Aguarda até que o serviço esteja disponível."""
-    print(f"Aguardando {service_name}...")
-    for attempt in range(timeout // interval):
-        try:
-            subprocess.run(check_cmd, check=True, capture_output=True, text=True)
-            print(f"{service_name} está pronto.")
-            return True
-        except subprocess.CalledProcessError as e:
-            print(f"{service_name} não está pronto, tentativa {attempt + 1}/{timeout // interval}: {e.stderr.strip()}")
-            time.sleep(interval)
-    print(f"Erro: {service_name} não ficou pronto após {timeout} segundos.")
-    return False
-
 # Obter SERVICE_TYPE
-service_type = os.environ.get('SERVICE_TYPE', '')
-if not service_type:
-    service_type = 'web'
-
-# Aguardar serviços dependentes
-if service_type != 'rabbitmq_consumer':
-# Condicional para verificar PostgreSQL apenas para web e celery (rabbitmq_consumer não precisa).
-    db_user = os.environ.get('DB_USER', '')
-    db_password = os.environ.get('DB_PASSWORD', '')
-    db_host = os.environ.get('DB_HOST', '')
-    db_port = os.environ.get('DB_PORT', '')
-    db_name = os.environ.get('DB_NAME', '')
-    if not all([db_user, db_password, db_host, db_port, db_name]):
-        print("Erro: Variáveis DB_USER, DB_PASSWORD, DB_HOST, DB_PORT ou DB_NAME não definidas.")
-        sys.exit(1)
-    db_url = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
-    if not wait_for_service("PostgreSQL", ['psql', db_url, '-c', '\q']):
-        sys.exit(1)
-
-# Aguardar RabbitMQ
-if not wait_for_service("RabbitMQ", ['nc', '-z', 'rabbitmq', '5672']):
-    sys.exit(1)
-
-# Aguardar MinIO
-if not wait_for_service("MinIO", ['curl', '-s', 'http://minio:9000/minio/health/live']):
-    sys.exit(1)
+service_type = os.environ.get('SERVICE_TYPE', 'web')
 
 # Executar comando baseado em SERVICE_TYPE
 match service_type:

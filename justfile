@@ -25,6 +25,7 @@ mng +command:
 # Run the tests
 test:
   docker compose run --rm web ruff check
+  docker compose run --rm web python manage.py collectstatic
   docker compose run --rm web pytest
 
 # Run Ruff for fix errors

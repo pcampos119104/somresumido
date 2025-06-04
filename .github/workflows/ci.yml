@@ -37,6 +37,18 @@ jobs:
           echo DB_PASSWORD=postgres >> .env
           echo DB_HOST=postgres >> .env
           echo DB_PORT=5432 >> .env
+          echo MINIO_ACCESS_KEY=minioadmin >> .env
+          echo MINIO_SECRET_KEY=minioadmin >> .env
+          echo MINIO_BUCKET_NAME=somresumido >> .env
+          echo MINIO_ENDPOINT=http://minio:9000 >> .env
+          echo MINIO_REGION_NAME=dev >> .env
+          echo MINIO_USE_SSL=false >> .env
+          echo CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672// >> .env
+          echo CELERY_RESULT_BACKEND=rpc:// >> .env
+          echo RABBITMQ_USER=guest >> .env
+          echo RABBITMQ_PASSWORD=guest >> .env
+          echo RABBITMQ_HOST=rabbitmq >> .env
+          echo RABBITMQ_PORT=5672 >> .env
           echo CSRF_TRUSTED_ORIGINS=http://localhost >> .env
           cat .env
 

@@ -27,9 +27,7 @@ def wait_for_service(service_name: str, check_cmd: list, timeout: int = 30, inte
     return False
 
 # Obter SERVICE_TYPE
-service_type = os.environ.get('SERVICE_TYPE', '')
-if not service_type:
-    service_type = 'web'
+service_type = os.environ.get('SERVICE_TYPE', 'web')
 
 # Aguardar serviços dependentes
 if service_type != 'rabbitmq_consumer':

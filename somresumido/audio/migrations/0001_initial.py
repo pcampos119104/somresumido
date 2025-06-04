@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -21,7 +20,19 @@ class Migration(migrations.Migration):
                 ('deleted_at', models.DateTimeField(blank=True, default=None, null=True)),
                 ('original_file', models.FileField(upload_to='raw/')),
                 ('processed_file', models.FileField(blank=True, null=True, upload_to='processed/')),
-                ('status', models.CharField(choices=[('PENDING', 'Pendente'), ('PROCESSING', 'Processando'), ('COMPLETED', 'Concluído'), ('FAILED', 'Falhou')], default='PENDING', max_length=20)),
+                (
+                    'status',
+                    models.CharField(
+                        choices=[
+                            ('PENDING', 'Pendente'),
+                            ('PROCESSING', 'Processando'),
+                            ('COMPLETED', 'Concluído'),
+                            ('FAILED', 'Falhou'),
+                        ],
+                        default='PENDING',
+                        max_length=20,
+                    ),
+                ),
                 ('title', models.CharField(blank=True, max_length=50, null=True)),
                 ('transcription', models.TextField(blank=True, null=True)),
                 ('summary', models.TextField(blank=True, null=True)),
